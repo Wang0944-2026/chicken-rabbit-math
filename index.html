@@ -76,11 +76,12 @@
 
             let cellStyle;
             if (isRescue) {
-                // 救援區專用：解除網格排/列數量限制，以最適比例彈性換行排列 (自然流動)，維持終極緊湊
+                // 救援區專用：強制單列排列，搭配 SVG 自動等比縮放不破版
                 cellStyle = {
-                    width: 'clamp(28px, 22%, 55px)',
-                    aspectRatio: '100/140',
-                    flexShrink: 0
+                    flex: '1 1 0',
+                    maxWidth: '65px',
+                    height: '100%',
+                    minWidth: 0
                 };
             } else if (totalCards) {
                 // 挑戰區：依照總數完美推算對齊的網格
@@ -464,7 +465,7 @@
                              </div>
                              
                              <div className="flex flex-row justify-center items-stretch gap-1 sm:gap-2 flex-1 min-h-0 px-1 pt-1.5">
-                                <div className="flex-1 bg-slate-50/50 rounded-lg p-[1px] flex flex-wrap content-center justify-center gap-[1px] overflow-y-auto mini-card-container min-h-0 max-h-full relative border border-slate-100">
+                                <div className="flex-1 bg-slate-50/50 rounded-lg p-[1px] flex flex-nowrap items-center justify-center gap-[1px] overflow-hidden mini-card-container min-h-0 max-h-full relative border border-slate-100">
                                     {Array.from({ length: scaffoldVar1 }).map((_, i) => (
                                         <MiniAnimalCard 
                                           key={`sv1-${i}`} 
@@ -482,7 +483,7 @@
                                   <button onClick={scaffoldSwapToVar1} disabled={scaffoldVar2 === 0} className="bg-orange-400 hover:bg-orange-500 text-white px-1 sm:px-2 py-1 rounded-md font-black shadow transform transition active:scale-90 text-[10px] sm:text-xs whitespace-nowrap border-b-2 border-orange-700">- 2</button>
                                 </div>
 
-                                <div className="flex-1 bg-slate-50/50 rounded-lg p-[1px] flex flex-wrap content-center justify-center gap-[1px] overflow-y-auto mini-card-container min-h-0 max-h-full relative border border-slate-100">
+                                <div className="flex-1 bg-slate-50/50 rounded-lg p-[1px] flex flex-nowrap items-center justify-center gap-[1px] overflow-hidden mini-card-container min-h-0 max-h-full relative border border-slate-100">
                                     {Array.from({ length: scaffoldVar2 }).map((_, i) => (
                                         <MiniAnimalCard 
                                           key={`sv2-${i}`} 
