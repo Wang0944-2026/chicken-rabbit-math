@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>雞兔同籠數學闖關 v2.9</title>
-    <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -27,7 +26,6 @@
     <style>
         body { margin: 0; padding: 0; overflow: hidden; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        /* 隱藏手牌區溢位捲軸，貫徹零捲動體驗 */
         .mini-card-container::-webkit-scrollbar { display: none; }
         .mini-card-container { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -38,30 +36,15 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        const Trophy = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-        );
-        const RefreshCcw = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        );
-        const ArrowRight = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        );
-        const CheckCircle2 = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-        );
-        const Hand = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/><path d="M6 11V9a2 2 0 0 1 2-2"/></svg>
-        );
-        const BookOpen = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        );
-        const HelpCircle = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        );
-        const Lightbulb = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
-        );
+        const Trophy = ({ size = 24, className = "" }) => <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>;
+        const RefreshCcw = ({ size = 24, className = "" }) => <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>;
+        const ArrowRight = ({ size = 24, className = "" }) => <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>;
+        const CheckCircle2 = ({ size = 24, className = "" }) => <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>;
+        const Hand = ({ size = 24, className = "" }) => <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/><path d="M6 11V9a2 2 0 0 1 2-2"/></svg>;
+        const BookOpen = ({ size = 24, className = "" }) => <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
+        const AlertCircle = ({ size = 24, className = "" }) => <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
+        const HelpCircle = ({ size = 24, className = "" }) => <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
+        const Lightbulb = ({ size = 24, className = "" }) => <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>;
 
         const PLAY_LEVELS = [
           { targetAnimals: 4, targetLegs: 12 },
@@ -86,18 +69,62 @@
           }
         ];
 
-        const MiniAnimalCard = ({ icon, type, colorClass, isCompact = false }) => {
+        const MiniAnimalCard = ({ icon, type, colorClass, totalCards, isRescue = false }) => {
             const isVehicle = icon === '🏍️' || icon === '🚗';
             const unit = isVehicle ? '輪' : '腳';
             const num = (type === 'chicken' || icon === '🐔' || icon === '🏍️') ? '2' : '4';
 
-            // 核心優化：使用 clamp 確保卡牌大小具有彈性，配合 flex-wrap 達成完美排列
+            let cellStyle;
+            if (isRescue) {
+                // 救援區專用：解除網格排/列數量限制，以最適比例彈性換行排列 (自然流動)，維持終極緊湊
+                cellStyle = {
+                    width: 'clamp(28px, 22%, 55px)',
+                    aspectRatio: '100/140',
+                    flexShrink: 0
+                };
+            } else if (totalCards) {
+                // 挑戰區：依照總數完美推算對齊的網格
+                const optCols = totalCards <= 6 ? 2 : (totalCards <= 15 ? 3 : 4);
+                const optRows = Math.ceil(totalCards / optCols);
+                cellStyle = {
+                    width: `calc(${100 / optCols}% - 2px)`,
+                    height: `calc(${100 / optRows}% - 2px)`,
+                };
+            } else {
+                cellStyle = { width: '100%', height: '100%' };
+            }
+
+            // 對應 Tailwind class 提取邊框顏色，讓 SVG 畫布也能完美繪製框線
+            const colorMap = {
+                'border-orange-200': '#fed7aa',
+                'border-teal-200': '#99f6e4',
+                'border-orange-100': '#ffedd5',
+                'border-teal-100': '#ccfbf1'
+            };
+            const strokeColor = colorMap[colorClass] || '#e2e8f0';
+
             return (
-                <div className={`flex-shrink-0 ${isCompact ? 'w-6 h-10 sm:w-10 sm:h-14 py-0.5' : 'w-[clamp(2.5rem,min(11vw,9vh),4.5rem)] aspect-[3/4.2] py-1 sm:py-1.5'} bg-white rounded border-[1.5px] sm:border-2 ${colorClass} shadow-sm flex flex-col items-center justify-center animate-fade-in hover:scale-105 transition-transform`}>
-                    <span className={`${isCompact ? 'text-[10px] sm:text-xl' : 'text-[clamp(1.2rem,min(4.5vw,4vh),2.5rem)]'} leading-none`}>{icon}</span>
-                    <span className={`text-[7px] sm:text-[clamp(0.6rem,min(1.5vw,1.5vh),0.85rem)] font-black text-slate-400 mt-0.5 whitespace-nowrap`}>
-                        {num}{unit}
-                    </span>
+                <div style={cellStyle} className="flex items-center justify-center p-[1px]">
+                    {/* 透過 SVG 的 viewBox="0 0 100 140"，強迫卡牌不論怎麼縮放，必定鎖死在 1:1.4 (即 3:4.2 的黃金比例)！ */}
+                    <svg
+                        viewBox="0 0 100 140"
+                        className="w-full h-full animate-fade-in hover:scale-105 transition-transform cursor-pointer"
+                        preserveAspectRatio="xMidYMid meet"
+                        style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.08))' }}
+                    >
+                        {/* 繪製白底圓角卡片 */}
+                        <rect x="2" y="2" width="96" height="136" rx="10" fill="#ffffff" stroke={strokeColor} strokeWidth="3" />
+                        
+                        {/* 置中繪製表情符號 */}
+                        <text x="50%" y="45%" dominantBaseline="middle" textAnchor="middle" fontSize="56" fontFamily="sans-serif">
+                            {icon}
+                        </text>
+                        
+                        {/* 置中繪製文字 */}
+                        <text x="50%" y="85%" dominantBaseline="middle" textAnchor="middle" fontSize="20" fontWeight="bold" fill="#94a3b8">
+                            {num}{unit}
+                        </text>
+                    </svg>
                 </div>
             );
         };
@@ -257,6 +284,7 @@
 
                 {gameMode === 'tutorial' && <TutorialSection onStartGame={() => setGameMode('play')} />}
 
+                {}
                 {gameMode === 'play' && (
                   <div className="flex flex-col flex-1 overflow-hidden bg-white rounded-b-3xl">
                     <div className="p-2 sm:p-4 flex flex-col flex-1 shrink min-h-0 justify-center gap-2 sm:gap-4 text-center">
@@ -293,21 +321,21 @@
                         </div>
                       </div>
 
-                      <div className="flex flex-col md:flex-row gap-2 sm:gap-4 flex-1 min-h-0 shrink">
-                        <div className={`relative flex-1 p-1 sm:p-4 rounded-xl sm:rounded-2xl border-4 transition-colors duration-300 ${isWon ? 'bg-green-100 border-green-400' : 'bg-slate-50 border-slate-200'} flex flex-col justify-between shrink min-h-0 items-center shadow-inner`}>
-                          <div className="text-slate-400 font-bold mb-1 text-[10px] sm:text-xs shrink-0 whitespace-nowrap tracking-tighter uppercase text-center w-full">手牌具象化</div>
+                      <div className="flex flex-col md:flex-row gap-2 sm:gap-4 flex-1 min-h-0 shrink items-stretch">
+                        <div className={`relative flex-1 p-1 sm:p-4 rounded-xl sm:rounded-2xl border-4 transition-colors duration-300 ${isWon ? 'bg-green-100 border-green-400' : 'bg-slate-50 border-slate-200'} flex flex-col shrink min-h-0 items-stretch shadow-inner`}>
+                          <div className="text-slate-400 font-bold mb-1 text-xs sm:text-sm shrink-0 whitespace-nowrap tracking-tighter uppercase text-center w-full">手牌具象化</div>
                           
-                          <div className="flex items-center justify-center gap-1 sm:gap-4 flex-1 min-h-0 shrink w-full px-1">
-                            {/* 流動卡牌區：移除 grid，改用 flex-wrap 達成彈性換行與防溢位縮放 */}
-                            <div className="flex-1 bg-transparent rounded-lg p-0.5 sm:p-1 flex flex-wrap content-start justify-center gap-1 sm:gap-2 overflow-hidden mini-card-container min-h-0 max-h-full">
+                          <div className="flex items-stretch justify-center gap-1 sm:gap-4 flex-1 min-h-0 shrink w-full px-1">
+                            {/* 卡牌收納區：透明背景、絕對 1px 內距、居中排列 */}
+                            <div className="flex-1 bg-transparent p-[1px] flex flex-wrap content-center justify-center gap-[1px] overflow-hidden mini-card-container min-h-0 max-h-full relative">
                                 {Array.from({ length: chickens }).map((_, i) => (
-                                    <MiniAnimalCard key={`c-${i}`} icon="🐔" type="chicken" colorClass="border-orange-200" />
+                                    <MiniAnimalCard key={`c-${i}`} icon="🐔" type="chicken" colorClass="border-orange-200" totalCards={level.targetAnimals} />
                                 ))}
-                                {chickens === 0 && <div className="w-full text-center text-slate-300 text-[10px] py-2 font-bold">無項目</div>}
+                                {chickens === 0 && <div className="absolute inset-0 flex items-center justify-center text-slate-300 text-xs sm:text-sm font-bold">無項目</div>}
                             </div>
 
                             {!isWon ? (
-                              <div className="flex flex-col gap-1.5 sm:gap-2 shrink-0">
+                              <div className="flex flex-col gap-1.5 sm:gap-2 shrink-0 self-center">
                                 <button onClick={swapC2R} disabled={chickens === 0} className="bg-teal-500 hover:bg-teal-400 text-white px-1.5 sm:px-3 py-1 sm:py-2 rounded-lg sm:rounded-xl font-bold shadow-md transform transition active:scale-95 flex flex-col items-center justify-center border-b-2 sm:border-b-4 border-teal-700 whitespace-nowrap shrink-0">
                                   <span className="text-[8px] sm:text-[10px] mb-0.5">+2</span><span className="text-sm sm:text-base">🐔➡️🐰</span>
                                 </button>
@@ -316,17 +344,17 @@
                                 </button>
                               </div>
                             ) : (
-                              <div className="flex flex-col items-center justify-center text-green-600 px-1 sm:px-4 shrink-0">
+                              <div className="flex flex-col items-center justify-center text-green-600 px-1 sm:px-4 shrink-0 self-center">
                                 <CheckCircle2 className="w-8 h-8 sm:w-14 sm:h-14 animate-pulse" />
                                 <span className="font-black mt-0.5 text-xs sm:text-xl whitespace-nowrap uppercase tracking-widest">OK!</span>
                               </div>
                             )}
 
-                            <div className="flex-1 bg-transparent rounded-lg p-0.5 sm:p-1 flex flex-wrap content-start justify-center gap-1 sm:gap-2 overflow-hidden mini-card-container min-h-0 max-h-full">
+                            <div className="flex-1 bg-transparent p-[1px] flex flex-wrap content-center justify-center gap-[1px] overflow-hidden mini-card-container min-h-0 max-h-full relative">
                                 {Array.from({ length: rabbits }).map((_, i) => (
-                                    <MiniAnimalCard key={`r-${i}`} icon="🐰" type="rabbit" colorClass="border-teal-200" />
+                                    <MiniAnimalCard key={`r-${i}`} icon="🐰" type="rabbit" colorClass="border-teal-200" totalCards={level.targetAnimals} />
                                 ))}
-                                {rabbits === 0 && <div className="w-full text-center text-slate-300 text-[10px] py-2 font-bold">無項目</div>}
+                                {rabbits === 0 && <div className="absolute inset-0 flex items-center justify-center text-slate-300 text-xs sm:text-sm font-bold">無項目</div>}
                             </div>
                           </div>
                         </div>
@@ -367,6 +395,7 @@
                   </div>
                 )}
 
+                {}
                 {gameMode === 'test' && (
                   <div className="flex flex-col flex-1 overflow-hidden bg-white rounded-b-3xl">
                     <div className="p-3 sm:p-5 flex flex-col flex-1 min-h-0 justify-center gap-2 sm:gap-3 shrink">
@@ -379,50 +408,55 @@
                         </div>
                       </div>
 
-                      <div className={`bg-slate-50 p-2 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 shadow-inner flex flex-col justify-center items-center flex-1 min-h-0 overflow-hidden transition-all duration-300 ${showScaffold ? 'gap-1' : 'gap-4'}`}>
+                      <div className={`bg-slate-50 p-2 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 shadow-inner flex flex-col justify-center items-center flex-1 min-h-0 overflow-hidden transition-all duration-300 ${showScaffold ? 'gap-1' : (testErrorCount > 0 ? 'gap-2 sm:gap-3' : 'gap-4')}`}>
                         
                         {TEST_QUESTIONS[testLevel].type === 'equation' && (
-                          <div id="quiz-formula" className={`flex flex-nowrap justify-center items-center font-black bg-white rounded-lg sm:rounded-2xl border-2 border-slate-100 shadow-sm w-full overflow-hidden shrink-0 transition-all duration-300 ${showScaffold ? 'py-1 sm:py-3 gap-1 text-[clamp(0.85rem,2vw,1.75rem)]' : 'py-2 sm:p-6 gap-1 sm:gap-3 text-[clamp(1rem,2.5vw,2rem)]'}`}>
+                          <div id="quiz-formula" className={`flex flex-nowrap justify-center items-center font-black bg-white rounded-lg sm:rounded-2xl border-2 border-slate-100 shadow-sm w-full overflow-hidden shrink-0 transition-all duration-300 ${showScaffold ? 'py-1 sm:py-2 gap-1 text-[clamp(0.85rem,2vw,1.5rem)]' : (testErrorCount > 0 ? 'py-1.5 sm:py-3 gap-1 sm:gap-2 text-[clamp(0.9rem,2vw,1.75rem)]' : 'py-2 sm:p-6 gap-1 sm:gap-3 text-[clamp(1rem,2.5vw,2rem)]')}`}>
                             <span className="text-orange-600 flex items-center gap-1 whitespace-nowrap shrink-0">
-                              ( <input type="number" value={testAns1} onChange={(e)=>setTestAns1(e.target.value)} className={`text-center border-b-2 sm:border-b-4 border-orange-300 focus:outline-none focus:border-orange-500 bg-orange-50 rounded shrink-0 font-black transition-all duration-300 ${showScaffold ? 'w-[clamp(2rem,5vw,3.8rem)] text-[clamp(1rem,3.5vw,2.5rem)] p-0' : 'w-[clamp(2.5rem,6vw,4.5rem)] text-[clamp(1.2rem,4vw,3rem)] p-0.5 sm:p-1'}`} placeholder="?" /> {TEST_QUESTIONS[testLevel].label1}×{TEST_QUESTIONS[testLevel].val1} )
+                              ( <input type="number" value={testAns1} onChange={(e)=>setTestAns1(e.target.value)} className={`text-center border-b-2 sm:border-b-4 border-orange-300 focus:outline-none focus:border-orange-500 bg-orange-50 rounded shrink-0 font-black transition-all duration-300 ${showScaffold ? 'w-[clamp(2rem,5vw,3.5rem)] text-[clamp(1rem,3.5vw,2rem)] p-0' : (testErrorCount > 0 ? 'w-[clamp(2.2rem,5.5vw,4rem)] text-[clamp(1.1rem,3.8vw,2.5rem)] p-0' : 'w-[clamp(2.5rem,6vw,4.5rem)] text-[clamp(1.2rem,4vw,3rem)] p-0.5 sm:p-1')}`} placeholder="?" /> {TEST_QUESTIONS[testLevel].label1}×{TEST_QUESTIONS[testLevel].val1} )
                             </span>
                             <span className="text-slate-300 font-light">+</span>
                             <span className="text-teal-600 flex items-center gap-1 whitespace-nowrap shrink-0">
-                              ( <input type="number" value={testAns2} onChange={(e)=>setTestAns2(e.target.value)} className={`text-center border-b-2 sm:border-b-4 border-teal-300 focus:outline-none focus:border-teal-500 bg-teal-50 rounded shrink-0 font-black transition-all duration-300 ${showScaffold ? 'w-[clamp(2rem,5vw,3.8rem)] text-[clamp(1rem,3.5vw,2.5rem)] p-0' : 'w-[clamp(2.5rem,6vw,4.5rem)] text-[clamp(1.2rem,4vw,3rem)] p-0.5 sm:p-1'}`} placeholder="?" /> {TEST_QUESTIONS[testLevel].label2}×{TEST_QUESTIONS[testLevel].val2} )
+                              ( <input type="number" value={testAns2} onChange={(e)=>setTestAns2(e.target.value)} className={`text-center border-b-2 sm:border-b-4 border-teal-300 focus:outline-none focus:border-teal-500 bg-teal-50 rounded shrink-0 font-black transition-all duration-300 ${showScaffold ? 'w-[clamp(2rem,5vw,3.5rem)] text-[clamp(1rem,3.5vw,2rem)] p-0' : (testErrorCount > 0 ? 'w-[clamp(2.2rem,5.5vw,4rem)] text-[clamp(1.1rem,3.8vw,2.5rem)] p-0' : 'w-[clamp(2.5rem,6vw,4.5rem)] text-[clamp(1.2rem,4vw,3rem)] p-0.5 sm:p-1')}`} placeholder="?" /> {TEST_QUESTIONS[testLevel].label2}×{TEST_QUESTIONS[testLevel].val2} )
                             </span>
                             <span className="text-slate-300 font-light">=</span>
-                            <span className={`text-slate-700 px-1 sm:px-3 font-black transition-all duration-300 ${showScaffold ? 'text-[clamp(1.3rem,4.5vw,3rem)]' : 'text-[clamp(1.5rem,5vw,3.5rem)]'}`}>{TEST_QUESTIONS[testLevel].targetLegs}</span>
+                            <span className={`text-slate-700 px-1 sm:px-3 font-black transition-all duration-300 ${showScaffold ? 'text-[clamp(1.2rem,4vw,2.5rem)]' : (testErrorCount > 0 ? 'text-[clamp(1.3rem,4.5vw,3rem)]' : 'text-[clamp(1.5rem,5vw,3.5rem)]')}`}>{TEST_QUESTIONS[testLevel].targetLegs}</span>
                           </div>
                         )}
 
                         {(TEST_QUESTIONS[testLevel].type === 'text' || TEST_QUESTIONS[testLevel].type === 'transfer') && (
-                          <div className={`flex flex-row justify-center items-center w-full transition-all duration-300 ${showScaffold ? 'gap-2' : 'gap-4'}`}>
-                            <div className={`bg-white rounded-lg sm:rounded-xl shadow-sm border-2 border-orange-200 flex flex-col items-center flex-1 max-w-[140px] sm:max-w-[200px] shrink-0 transition-all duration-300 ${showScaffold ? 'px-1 py-1.5 gap-0.5' : 'px-2 py-2 sm:py-3 gap-1'}`}>
-                              <span className={`font-bold text-orange-700 whitespace-nowrap transition-all duration-300 ${showScaffold ? 'text-[10px] sm:text-base' : 'text-xs sm:text-base'}`}>{TEST_QUESTIONS[testLevel].icon1} {TEST_QUESTIONS[testLevel].label1}</span>
-                              <div className="flex items-end gap-1 text-sm sm:text-lg font-bold text-center">
-                                <input type="number" value={testAns1} onChange={(e)=>setTestAns1(e.target.value)} className={`text-center border-b-2 sm:border-b-4 border-orange-300 focus:outline-none focus:border-orange-500 bg-orange-50 rounded shrink-0 font-black transition-all duration-300 ${showScaffold ? 'w-8 sm:w-16 text-lg sm:text-2xl p-0' : 'w-10 sm:w-16 text-lg sm:text-2xl p-0.5 sm:p-1'}`} placeholder="?" />
-                                <span className={`text-slate-500 mb-0.5 whitespace-nowrap font-black transition-all duration-300 ${showScaffold ? 'text-xs' : 'text-sm'}`}>隻</span>
+                          <div className={`flex flex-row justify-center items-center w-full transition-all duration-300 ${showScaffold ? 'gap-2' : (testErrorCount > 0 ? 'gap-3 sm:gap-6' : 'gap-6 sm:gap-10')}`}>
+                            <div className={`bg-white rounded-lg sm:rounded-2xl shadow-md border-2 sm:border-4 border-orange-200 flex flex-col items-center flex-1 shrink-0 transition-all duration-300 ${showScaffold ? 'max-w-[120px] sm:max-w-[180px] px-1 py-1.5 gap-0.5' : (testErrorCount > 0 ? 'max-w-[160px] sm:max-w-[240px] px-2 py-3 sm:py-4 gap-1 sm:gap-2' : 'max-w-[200px] sm:max-w-[320px] px-3 py-4 sm:py-8 gap-2 sm:gap-4')}`}>
+                              <span className={`font-bold text-orange-700 whitespace-nowrap transition-all duration-300 ${showScaffold ? 'text-[10px] sm:text-sm' : (testErrorCount > 0 ? 'text-sm sm:text-xl' : 'text-lg sm:text-3xl')}`}>{TEST_QUESTIONS[testLevel].icon1} {TEST_QUESTIONS[testLevel].label1}</span>
+                              <div className="flex items-end gap-1 sm:gap-2 font-bold text-center">
+                                <input type="number" value={testAns1} onChange={(e)=>setTestAns1(e.target.value)} className={`text-center border-b-2 sm:border-b-4 border-orange-300 focus:outline-none focus:border-orange-500 bg-orange-50 rounded shrink-0 font-black transition-all duration-300 ${showScaffold ? 'w-8 sm:w-16 text-lg sm:text-2xl p-0' : (testErrorCount > 0 ? 'w-12 sm:w-20 text-2xl sm:text-4xl p-0.5 sm:p-1' : 'w-16 sm:w-28 text-3xl sm:text-6xl p-1 sm:p-2')}`} placeholder="?" />
+                                <span className={`text-slate-500 mb-1 sm:mb-2 whitespace-nowrap font-black transition-all duration-300 ${showScaffold ? 'text-xs' : (testErrorCount > 0 ? 'text-sm sm:text-xl' : 'text-base sm:text-2xl')}`}>{TEST_QUESTIONS[testLevel].type === 'transfer' ? '輛' : '隻'}</span>
                               </div>
                             </div>
-                            <div className={`bg-white rounded-lg sm:rounded-xl shadow-sm border-2 border-teal-200 flex flex-col items-center flex-1 max-w-[140px] sm:max-w-[200px] shrink-0 transition-all duration-300 ${showScaffold ? 'px-1 py-1.5 gap-0.5' : 'px-2 py-2 sm:py-3 gap-1'}`}>
-                              <span className={`font-bold text-teal-700 whitespace-nowrap transition-all duration-300 ${showScaffold ? 'text-[10px] sm:text-base' : 'text-xs sm:text-base'}`}>{TEST_QUESTIONS[testLevel].icon2} {TEST_QUESTIONS[testLevel].label2}</span>
-                              <div className="flex items-end gap-1 text-sm sm:text-lg font-bold text-center">
-                                <input type="number" value={testAns2} onChange={(e)=>setTestAns2(e.target.value)} className={`text-center border-b-2 sm:border-b-4 border-teal-300 focus:outline-none focus:border-teal-500 bg-teal-50 rounded shrink-0 font-black transition-all duration-300 ${showScaffold ? 'w-8 sm:w-16 text-lg sm:text-2xl p-0' : 'w-10 sm:w-16 text-lg sm:text-2xl p-0.5 sm:p-1'}`} placeholder="?" />
-                                <span className={`text-slate-500 mb-0.5 whitespace-nowrap font-black transition-all duration-300 ${showScaffold ? 'text-xs' : 'text-sm'}`}>隻</span>
+                            <div className={`bg-white rounded-lg sm:rounded-2xl shadow-md border-2 sm:border-4 border-teal-200 flex flex-col items-center flex-1 shrink-0 transition-all duration-300 ${showScaffold ? 'max-w-[120px] sm:max-w-[180px] px-1 py-1.5 gap-0.5' : (testErrorCount > 0 ? 'max-w-[160px] sm:max-w-[240px] px-2 py-3 sm:py-4 gap-1 sm:gap-2' : 'max-w-[200px] sm:max-w-[320px] px-3 py-4 sm:py-8 gap-2 sm:gap-4')}`}>
+                              <span className={`font-bold text-teal-700 whitespace-nowrap transition-all duration-300 ${showScaffold ? 'text-[10px] sm:text-sm' : (testErrorCount > 0 ? 'text-sm sm:text-xl' : 'text-lg sm:text-3xl')}`}>{TEST_QUESTIONS[testLevel].icon2} {TEST_QUESTIONS[testLevel].label2}</span>
+                              <div className="flex items-end gap-1 sm:gap-2 font-bold text-center">
+                                <input type="number" value={testAns2} onChange={(e)=>setTestAns2(e.target.value)} className={`text-center border-b-2 sm:border-b-4 border-teal-300 focus:outline-none focus:border-teal-500 bg-teal-50 rounded shrink-0 font-black transition-all duration-300 ${showScaffold ? 'w-8 sm:w-16 text-lg sm:text-2xl p-0' : (testErrorCount > 0 ? 'w-12 sm:w-20 text-2xl sm:text-4xl p-0.5 sm:p-1' : 'w-16 sm:w-28 text-3xl sm:text-6xl p-1 sm:p-2')}`} placeholder="?" />
+                                <span className={`text-slate-500 mb-1 sm:mb-2 whitespace-nowrap font-black transition-all duration-300 ${showScaffold ? 'text-xs' : (testErrorCount > 0 ? 'text-sm sm:text-xl' : 'text-base sm:text-2xl')}`}>{TEST_QUESTIONS[testLevel].type === 'transfer' ? '輛' : '隻'}</span>
                               </div>
                             </div>
                           </div>
                         )}
                         
-                        {}
                         {testErrorCount > 0 && !showScaffold && (
-                          <div className="mt-2 flex flex-col items-center animate-fade-in w-full shrink-0">
-                            <button onClick={() => setShowScaffold(true)} className="bg-blue-500 hover:bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-bold flex items-center gap-1.5 shadow-md transition-all active:scale-95 text-[10px] sm:text-sm whitespace-nowrap border-b-4 border-blue-700">
-                                <HelpCircle className="w-3.5 h-3.5 sm:w-5 sm:h-5 shrink-0" /> 開啟救援模式：動手排排看
-                            </button>
+                          <div className="mt-1 sm:mt-2 flex flex-col items-center animate-fade-in w-full shrink-0 gap-1.5 sm:gap-2">
+                            <div className="text-red-500 font-bold text-xs sm:text-base flex items-center gap-1 animate-bounce bg-red-50 px-3 py-1 rounded-full border border-red-200">
+                                <AlertCircle size={16} /> 哎呀！數量不對歐~再嘗試一次
+                            </div>
+                            {testErrorCount >= 2 && (
+                                <button onClick={() => setShowScaffold(true)} className="bg-blue-500 hover:bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-bold flex items-center gap-1.5 shadow-md transition-all active:scale-95 text-[10px] sm:text-sm whitespace-nowrap border-b-4 border-blue-700">
+                                    <HelpCircle className="w-3.5 h-3.5 sm:w-5 sm:h-5 shrink-0" /> 開啟救援模式：動手排排看
+                                </button>
+                            )}
                           </div>
                         )}
 
+                        {}
                         {showScaffold && (
                            <div className="mt-1 sm:mt-2 bg-white p-1 sm:p-2 rounded-xl border-4 border-blue-300 shadow-lg relative animate-fade-in w-full shrink min-h-0 flex flex-col border-dashed">
                              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-2 py-0.5 rounded-full font-bold text-[9px] sm:text-xs shadow-sm flex items-center gap-0.5 whitespace-nowrap">
@@ -430,37 +464,39 @@
                              </div>
                              
                              <div className="flex flex-row justify-center items-stretch gap-1 sm:gap-2 flex-1 min-h-0 px-1 pt-1.5">
-                                <div className="flex-1 bg-slate-50/50 rounded-lg p-0.5 flex flex-wrap content-start justify-center gap-0.5 sm:gap-1 overflow-y-auto mini-card-container border border-slate-100">
+                                <div className="flex-1 bg-slate-50/50 rounded-lg p-[1px] flex flex-wrap content-center justify-center gap-[1px] overflow-y-auto mini-card-container min-h-0 max-h-full relative border border-slate-100">
                                     {Array.from({ length: scaffoldVar1 }).map((_, i) => (
                                         <MiniAnimalCard 
                                           key={`sv1-${i}`} 
                                           icon={TEST_QUESTIONS[testLevel].icon1} 
                                           type={TEST_QUESTIONS[testLevel].label1 === '雞' || TEST_QUESTIONS[testLevel].label1 === '機車' ? 'chicken' : 'rabbit'} 
                                           colorClass="border-orange-100" 
-                                          isCompact={true} 
+                                          isRescue={true}
                                         />
                                     ))}
+                                    {scaffoldVar1 === 0 && <div className="absolute inset-0 flex items-center justify-center text-slate-300 text-[10px] sm:text-sm font-bold">無項目</div>}
                                 </div>
                                 
-                                <div className="flex flex-col gap-1 sm:gap-1.5 justify-center shrink-0 min-w-[65px] sm:min-w-[90px]">
+                                <div className="flex flex-col gap-1 sm:gap-1.5 justify-center shrink-0 min-w-[65px] sm:min-w-[90px] z-10">
                                   <button onClick={scaffoldSwapToVar2} disabled={scaffoldVar1 === 0} className="bg-blue-500 hover:bg-blue-600 text-white px-1 sm:px-2 py-1 rounded-md font-black shadow transform transition active:scale-90 text-[10px] sm:text-xs whitespace-nowrap border-b-2 border-blue-800">+ 2</button>
                                   <button onClick={scaffoldSwapToVar1} disabled={scaffoldVar2 === 0} className="bg-orange-400 hover:bg-orange-500 text-white px-1 sm:px-2 py-1 rounded-md font-black shadow transform transition active:scale-90 text-[10px] sm:text-xs whitespace-nowrap border-b-2 border-orange-700">- 2</button>
                                 </div>
 
-                                <div className="flex-1 bg-slate-50/50 rounded-lg p-0.5 flex flex-wrap content-start justify-center gap-0.5 sm:gap-1 overflow-y-auto mini-card-container border border-slate-100">
+                                <div className="flex-1 bg-slate-50/50 rounded-lg p-[1px] flex flex-wrap content-center justify-center gap-[1px] overflow-y-auto mini-card-container min-h-0 max-h-full relative border border-slate-100">
                                     {Array.from({ length: scaffoldVar2 }).map((_, i) => (
                                         <MiniAnimalCard 
                                           key={`sv2-${i}`} 
                                           icon={TEST_QUESTIONS[testLevel].icon2} 
                                           type={TEST_QUESTIONS[testLevel].label2 === '兔' || TEST_QUESTIONS[testLevel].label2 === '汽車' ? 'rabbit' : 'chicken'} 
                                           colorClass="border-teal-100" 
-                                          isCompact={true} 
+                                          isRescue={true}
                                         />
                                     ))}
+                                    {scaffoldVar2 === 0 && <div className="absolute inset-0 flex items-center justify-center text-slate-300 text-[10px] sm:text-sm font-bold">無項目</div>}
                                 </div>
                              </div>
                              
-                             <div className="mt-1 text-center bg-blue-50 py-0.5 sm:py-1 rounded border border-blue-100 font-bold text-xs sm:text-sm shrink-0 whitespace-nowrap text-center w-full">
+                             <div className="mt-1 text-center bg-blue-50 py-0.5 sm:py-1 rounded border border-blue-100 font-bold text-xs sm:text-sm shrink-0 whitespace-nowrap w-full">
                                目前合計：<span className={scaffoldVar1 * TEST_QUESTIONS[testLevel].val1 + scaffoldVar2 * TEST_QUESTIONS[testLevel].val2 === TEST_QUESTIONS[testLevel].targetLegs ? "text-green-600 font-black text-sm sm:text-lg" : "text-blue-600 font-black text-sm sm:text-lg"}>{scaffoldVar1 * TEST_QUESTIONS[testLevel].val1 + scaffoldVar2 * TEST_QUESTIONS[testLevel].val2}</span>
                                <span className="text-slate-400 text-[10px] ml-1">/ 目標 {TEST_QUESTIONS[testLevel].targetLegs}</span>
                              </div>
@@ -477,6 +513,7 @@
                   </div>
                 )}
 
+                {}
                 {gameMode === 'testComplete' && (
                   <div className="flex flex-col flex-1 overflow-hidden items-center justify-center p-6 sm:p-12 bg-white rounded-b-3xl text-center space-y-3 sm:space-y-4">
                     <Trophy className="text-yellow-400 drop-shadow-xl animate-bounce w-16 h-16 sm:w-24 sm:h-24 shrink-0" />
