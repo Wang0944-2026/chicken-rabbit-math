@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>雞兔同籠數學闖關 v2.6</title>
+    <title>雞兔同籠數學闖關 v2.9</title>
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -21,15 +21,13 @@
             }
         }
     </script>
-    <!-- 引入 React 核心庫 -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- 引入 Babel 以在瀏覽器編譯 JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         body { margin: 0; padding: 0; overflow: hidden; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        /* 隱藏手牌區溢位捲軸 */
+        /* 隱藏手牌區溢位捲軸，貫徹零捲動體驗 */
         .mini-card-container::-webkit-scrollbar { display: none; }
         .mini-card-container { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -40,7 +38,6 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // === 圖示元件 ===
         const Trophy = ({ size = 24, className = "" }) => (
             <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
         );
@@ -59,9 +56,6 @@
         const BookOpen = ({ size = 24, className = "" }) => (
             <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         );
-        const AlertCircle = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        );
         const HelpCircle = ({ size = 24, className = "" }) => (
             <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         );
@@ -69,7 +63,6 @@
             <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
         );
 
-        // === 數據設定 ===
         const PLAY_LEVELS = [
           { targetAnimals: 4, targetLegs: 12 },
           { targetAnimals: 5, targetLegs: 14 },
@@ -89,21 +82,26 @@
           },
           {
             type: 'transfer', title: '🌟 第三關：生活應用', text: '停車場裡有「兩輪機車」與「四輪汽車」共 8 輛，輪子總共有 26 個。請問機車和汽車各有幾輛？',
-            total: 8, targetLegs: 26, ans1: 3, ans2: 5, label1: '機車', label2: '汽車', val1: 2, val2: 4, icon1: '🏍️', icon2: '🚗'
+            total: 8, targetLegs: 26, ans1: 3, ans2: 5, label1: '機車', label2: '汽車', unit1: '個輪子', val1: 2, val2: 4, icon1: '🏍️', icon2: '🚗'
           }
         ];
 
-        // === 子組件：具象化迷你卡牌 (優化：文字整合在圖片下方，一體化設計) ===
-        const MiniAnimalCard = ({ icon, type, colorClass, isCompact = false }) => (
-            <div className={`flex-shrink-0 ${isCompact ? 'w-6 h-10 sm:w-10 sm:h-14' : 'w-9 h-14 sm:w-12 sm:h-18'} bg-white rounded border-[1.5px] sm:border-2 ${colorClass} shadow-sm flex flex-col items-center justify-center animate-fade-in`}>
-                <span className={`${isCompact ? 'text-[10px] sm:text-xl' : 'text-base sm:text-2xl'} leading-none`}>{icon}</span>
-                <span className={`text-[7px] sm:text-[10px] font-black text-slate-400 mt-0.5 whitespace-nowrap`}>
-                    {type === 'chicken' || icon === '🐔' || icon === '🏍️' ? '2腳' : '4腳'}
-                </span>
-            </div>
-        );
+        const MiniAnimalCard = ({ icon, type, colorClass, isCompact = false }) => {
+            const isVehicle = icon === '🏍️' || icon === '🚗';
+            const unit = isVehicle ? '輪' : '腳';
+            const num = (type === 'chicken' || icon === '🐔' || icon === '🏍️') ? '2' : '4';
 
-        // === 課前探索區元件 ===
+            // 核心優化：使用 clamp 確保卡牌大小具有彈性，配合 flex-wrap 達成完美排列
+            return (
+                <div className={`flex-shrink-0 ${isCompact ? 'w-6 h-10 sm:w-10 sm:h-14 py-0.5' : 'w-[clamp(2.5rem,min(11vw,9vh),4.5rem)] aspect-[3/4.2] py-1 sm:py-1.5'} bg-white rounded border-[1.5px] sm:border-2 ${colorClass} shadow-sm flex flex-col items-center justify-center animate-fade-in hover:scale-105 transition-transform`}>
+                    <span className={`${isCompact ? 'text-[10px] sm:text-xl' : 'text-[clamp(1.2rem,min(4.5vw,4vh),2.5rem)]'} leading-none`}>{icon}</span>
+                    <span className={`text-[7px] sm:text-[clamp(0.6rem,min(1.5vw,1.5vh),0.85rem)] font-black text-slate-400 mt-0.5 whitespace-nowrap`}>
+                        {num}{unit}
+                    </span>
+                </div>
+            );
+        };
+
         const TutorialSection = ({ onStartGame }) => {
           const [slots, setSlots] = useState(['chicken', 'chicken', 'chicken', 'chicken']);
           const chickenCount = slots.filter(a => a === 'chicken').length;
@@ -135,11 +133,10 @@
                     <button onClick={addAnimal} disabled={slots.length >= 10} className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center bg-white rounded-full text-green-700 font-black shadow-sm disabled:opacity-50 hover:bg-green-50 transition-colors text-xs sm:text-base shrink-0" title="增加">+</button>
                   </div>
                   <span className="bg-white px-2 sm:px-4 py-1 sm:py-1.5 rounded-full font-black text-xs sm:text-base text-green-700 shadow-sm border-2 border-green-200 whitespace-nowrap shrink-0">
-                    總腳數：{totalLegs} 隻
+                    目前總腳數：{totalLegs} 隻
                   </span>
                 </div>
                 
-                {/* 探索區卡牌：高度自適應修正，移除強制 aspect 限制，改用 flex 伸展 */}
                 <div className="flex flex-nowrap justify-center gap-1 sm:gap-2 mb-1 sm:mb-2 w-full overflow-hidden pb-1 px-1 shrink min-h-0 items-stretch flex-1">
                   {slots.map((animal, index) => (
                     <div key={index} onClick={() => handleSlotClick(index)} className="flex-1 min-w-0 max-w-[6.5rem] bg-white rounded-lg sm:rounded-xl shadow-md cursor-pointer transition-all flex flex-col items-center justify-center hover:scale-105 hover:shadow-lg border-slate-200 border-2 sm:border-[3px] py-1 sm:py-2">
@@ -176,7 +173,6 @@
           );
         };
 
-        // === 主應用程式 ===
         function App() {
           const [gameMode, setGameMode] = useState('tutorial'); 
           const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
@@ -238,7 +234,7 @@
             <div className={`h-screen w-screen overflow-hidden p-2 sm:p-4 lg:p-6 font-sans text-slate-800 transition-colors duration-500 flex flex-col justify-center items-center relative ${gameMode === 'test' || gameMode === 'testComplete' ? 'bg-blue-50' : 'bg-green-50'}`}>
               
               <div className="fixed bottom-1 right-1 sm:bottom-2 sm:right-2 bg-slate-800/40 backdrop-blur-md text-white/90 text-[9px] sm:text-xs px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg shadow-sm z-50 pointer-events-none border border-white/20 font-medium tracking-wide whitespace-nowrap">
-                大榮老師製作 © 2026 | Version 2.6 (v2.6)
+                大榮老師製作 © 2026 | Version 2.9 (v2.9)
               </div>
 
               <div className={`max-w-5xl mx-auto w-full h-full flex flex-col bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border-4 ${gameMode === 'test' || gameMode === 'testComplete' ? 'border-blue-200' : 'border-green-200'}`}>
@@ -265,47 +261,49 @@
                   <div className="flex flex-col flex-1 overflow-hidden bg-white rounded-b-3xl">
                     <div className="p-2 sm:p-4 flex flex-col flex-1 shrink min-h-0 justify-center gap-2 sm:gap-4 text-center">
                       <div className="flex flex-col sm:flex-row justify-between items-center gap-2 border-b-2 border-slate-100 pb-2 shrink-0">
-                        <div className="bg-amber-100 px-3 py-1.5 sm:px-5 sm:py-2 rounded-xl sm:rounded-2xl border-4 border-amber-300 shadow-sm flex flex-row items-center gap-2 w-auto shrink-0 whitespace-nowrap">
-                          <div className="bg-amber-400 text-amber-900 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full font-bold text-xs sm:text-sm shadow-sm shrink-0">🎯 目標</div>
-                          <div className="flex flex-row gap-2 sm:gap-4 text-sm sm:text-lg font-bold items-center text-slate-700">
-                            <div>共 <span className="text-lg sm:text-3xl text-amber-600 font-black">{level.targetAnimals}</span> 隻</div>
-                            <div className="text-amber-300 font-black opacity-40">|</div>
-                            <div>共 <span className="text-lg sm:text-3xl text-red-600 font-black">{level.targetLegs}</span> 隻腳</div>
-                          </div>
+                        <div className="flex flex-row items-center gap-2 sm:gap-4 w-full justify-between sm:justify-start">
+                            <div className="bg-amber-100 px-3 py-1.5 sm:px-5 sm:py-2 rounded-xl sm:rounded-2xl border-4 border-amber-300 shadow-sm flex flex-row items-center gap-2 w-auto shrink-0 whitespace-nowrap relative">
+                                <div className="bg-amber-400 text-amber-900 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full font-bold text-xs sm:text-sm shadow-sm shrink-0">🎯 目標</div>
+                                <div className="flex flex-row gap-2 sm:gap-4 text-sm sm:text-lg font-bold items-center text-slate-700">
+                                    <div>共 <span className="text-lg sm:text-3xl text-amber-600 font-black">{level.targetAnimals}</span> 隻</div>
+                                    <div className="text-amber-300 font-black opacity-40">|</div>
+                                    <div>共 <span className="text-lg sm:text-3xl text-red-600 font-black">{level.targetLegs}</span> 隻腳</div>
+                                </div>
+
+                                {!isWon && (
+                                    <div className="ml-2 sm:ml-4 flex items-center">
+                                        <button 
+                                            onClick={() => setIsHintVisible(!isHintVisible)}
+                                            className={`p-1.5 sm:p-2 rounded-full shadow-sm border-2 transition-all shrink-0 ${isHintVisible ? 'bg-yellow-400 border-yellow-200 scale-110' : 'bg-white border-slate-200 hover:bg-slate-50'}`}
+                                            title="點擊獲取提示"
+                                        >
+                                            <Lightbulb size={20} className={isHintVisible ? 'text-white' : 'text-yellow-500'} />
+                                        </button>
+                                        
+                                        {isHintVisible && (
+                                            <div className="absolute top-full left-0 mt-2 bg-white text-slate-700 p-2 sm:p-3 rounded-xl shadow-2xl border-2 border-yellow-400 text-[10px] sm:text-sm font-black whitespace-nowrap animate-fade-in z-50">
+                                                <div className="absolute -top-2 left-6 w-4 h-4 bg-white border-t-2 border-l-2 border-yellow-400 rotate-45"></div>
+                                                {currentLegs < level.targetLegs ? <span className="text-blue-600">💡 腳太少了，換兔！ (+2)</span> : 
+                                                currentLegs > level.targetLegs ? <span className="text-red-500">💡 腳太多了，換雞！ (-2)</span> : '腳數正確，請檢查數量...'}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                       </div>
 
                       <div className="flex flex-col md:flex-row gap-2 sm:gap-4 flex-1 min-h-0 shrink">
                         <div className={`relative flex-1 p-1 sm:p-4 rounded-xl sm:rounded-2xl border-4 transition-colors duration-300 ${isWon ? 'bg-green-100 border-green-400' : 'bg-slate-50 border-slate-200'} flex flex-col justify-between shrink min-h-0 items-center shadow-inner`}>
-                          <div className="text-slate-400 font-bold mb-1 text-[10px] sm:text-xs shrink-0 whitespace-nowrap tracking-tighter uppercase">手牌具象化</div>
+                          <div className="text-slate-400 font-bold mb-1 text-[10px] sm:text-xs shrink-0 whitespace-nowrap tracking-tighter uppercase text-center w-full">手牌具象化</div>
                           
-                          {/* 💡 圖案移動至手牌區內的右上角 */}
-                          {!isWon && (
-                              <div className="absolute top-1 right-1 sm:top-2 sm:right-2 z-30">
-                                  <button 
-                                      onClick={() => setIsHintVisible(!isHintVisible)}
-                                      className={`p-1.5 sm:p-2 rounded-full shadow-sm border-2 transition-all shrink-0 ${isHintVisible ? 'bg-yellow-400 border-yellow-200 scale-110' : 'bg-white border-slate-200 hover:bg-slate-50'}`}
-                                      title="點擊獲取提示"
-                                  >
-                                      <Lightbulb size={20} className={isHintVisible ? 'text-white' : 'text-yellow-500'} />
-                                  </button>
-                                  
-                                  {isHintVisible && (
-                                      <div className="absolute top-full mt-2 right-0 bg-white text-slate-700 p-2 sm:p-3 rounded-xl shadow-2xl border-2 border-yellow-400 text-[10px] sm:text-sm font-black whitespace-nowrap animate-fade-in z-50">
-                                          <div className="absolute -top-2 right-4 w-4 h-4 bg-white border-t-2 border-l-2 border-yellow-400 rotate-45"></div>
-                                          {currentLegs < level.targetLegs ? <span className="text-blue-600">💡 腳太少了，換兔！ (+2)</span> : 
-                                          currentLegs > level.targetLegs ? <span className="text-red-500">💡 腳太多了，換雞！ (-2)</span> : '腳數正確，請檢查數量...'}
-                                      </div>
-                                  )}
-                              </div>
-                          )}
-
                           <div className="flex items-center justify-center gap-1 sm:gap-4 flex-1 min-h-0 shrink w-full px-1">
-                            <div className="flex-1 bg-transparent rounded-lg p-0.5 sm:p-1 grid grid-cols-3 content-start justify-items-center gap-1 overflow-y-auto mini-card-container min-h-0 max-h-full">
+                            {/* 流動卡牌區：移除 grid，改用 flex-wrap 達成彈性換行與防溢位縮放 */}
+                            <div className="flex-1 bg-transparent rounded-lg p-0.5 sm:p-1 flex flex-wrap content-start justify-center gap-1 sm:gap-2 overflow-hidden mini-card-container min-h-0 max-h-full">
                                 {Array.from({ length: chickens }).map((_, i) => (
-                                    <MiniAnimalCard key={`c-${i}`} icon="🐔" colorClass="border-orange-200" />
+                                    <MiniAnimalCard key={`c-${i}`} icon="🐔" type="chicken" colorClass="border-orange-200" />
                                 ))}
-                                {chickens === 0 && <div className="col-span-3 text-slate-300 text-[10px] py-2">無項目</div>}
+                                {chickens === 0 && <div className="w-full text-center text-slate-300 text-[10px] py-2 font-bold">無項目</div>}
                             </div>
 
                             {!isWon ? (
@@ -324,11 +322,11 @@
                               </div>
                             )}
 
-                            <div className="flex-1 bg-transparent rounded-lg p-0.5 sm:p-1 grid grid-cols-3 content-start justify-items-center gap-1 overflow-y-auto mini-card-container min-h-0 max-h-full">
+                            <div className="flex-1 bg-transparent rounded-lg p-0.5 sm:p-1 flex flex-wrap content-start justify-center gap-1 sm:gap-2 overflow-hidden mini-card-container min-h-0 max-h-full">
                                 {Array.from({ length: rabbits }).map((_, i) => (
-                                    <MiniAnimalCard key={`r-${i}`} icon="🐰" colorClass="border-teal-200" />
+                                    <MiniAnimalCard key={`r-${i}`} icon="🐰" type="rabbit" colorClass="border-teal-200" />
                                 ))}
-                                {rabbits === 0 && <div className="col-span-3 text-slate-300 text-[10px] py-2">無項目</div>}
+                                {rabbits === 0 && <div className="w-full text-center text-slate-300 text-[10px] py-2 font-bold">無項目</div>}
                             </div>
                           </div>
                         </div>
@@ -416,6 +414,7 @@
                           </div>
                         )}
                         
+                        {}
                         {testErrorCount > 0 && !showScaffold && (
                           <div className="mt-2 flex flex-col items-center animate-fade-in w-full shrink-0">
                             <button onClick={() => setShowScaffold(true)} className="bg-blue-500 hover:bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-bold flex items-center gap-1.5 shadow-md transition-all active:scale-95 text-[10px] sm:text-sm whitespace-nowrap border-b-4 border-blue-700">
@@ -424,7 +423,6 @@
                           </div>
                         )}
 
-                        {/* 救援模式 */}
                         {showScaffold && (
                            <div className="mt-1 sm:mt-2 bg-white p-1 sm:p-2 rounded-xl border-4 border-blue-300 shadow-lg relative animate-fade-in w-full shrink min-h-0 flex flex-col border-dashed">
                              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-2 py-0.5 rounded-full font-bold text-[9px] sm:text-xs shadow-sm flex items-center gap-0.5 whitespace-nowrap">
@@ -432,29 +430,39 @@
                              </div>
                              
                              <div className="flex flex-row justify-center items-stretch gap-1 sm:gap-2 flex-1 min-h-0 px-1 pt-1.5">
-                                {/* 項目1卡牌區 (流動佈局) */}
                                 <div className="flex-1 bg-slate-50/50 rounded-lg p-0.5 flex flex-wrap content-start justify-center gap-0.5 sm:gap-1 overflow-y-auto mini-card-container border border-slate-100">
                                     {Array.from({ length: scaffoldVar1 }).map((_, i) => (
-                                        <MiniAnimalCard key={`sv1-${i}`} icon={TEST_QUESTIONS[testLevel].icon1} type={TEST_QUESTIONS[testLevel].label1 === '雞' || TEST_QUESTIONS[testLevel].label1 === '機車' ? 'chicken' : 'rabbit'} colorClass="border-orange-100" isCompact={true} />
+                                        <MiniAnimalCard 
+                                          key={`sv1-${i}`} 
+                                          icon={TEST_QUESTIONS[testLevel].icon1} 
+                                          type={TEST_QUESTIONS[testLevel].label1 === '雞' || TEST_QUESTIONS[testLevel].label1 === '機車' ? 'chicken' : 'rabbit'} 
+                                          colorClass="border-orange-100" 
+                                          isCompact={true} 
+                                        />
                                     ))}
                                 </div>
                                 
                                 <div className="flex flex-col gap-1 sm:gap-1.5 justify-center shrink-0 min-w-[65px] sm:min-w-[90px]">
-                                  <button onClick={scaffoldSwapToVar2} disabled={scaffoldVar1 === 0} className="bg-blue-500 hover:bg-blue-600 text-white px-1 sm:px-2 py-1 rounded-md font-black shadow transform transition active:scale-90 text-[10px] sm:text-xs whitespace-nowrap border-b-2 border-blue-800">+ 2 腳</button>
-                                  <button onClick={scaffoldSwapToVar1} disabled={scaffoldVar2 === 0} className="bg-orange-400 hover:bg-orange-500 text-white px-1.5 sm:px-2 py-1 rounded-md font-black shadow transform transition active:scale-90 text-[10px] sm:text-xs whitespace-nowrap border-b-2 border-orange-700">- 2 腳</button>
+                                  <button onClick={scaffoldSwapToVar2} disabled={scaffoldVar1 === 0} className="bg-blue-500 hover:bg-blue-600 text-white px-1 sm:px-2 py-1 rounded-md font-black shadow transform transition active:scale-90 text-[10px] sm:text-xs whitespace-nowrap border-b-2 border-blue-800">+ 2</button>
+                                  <button onClick={scaffoldSwapToVar1} disabled={scaffoldVar2 === 0} className="bg-orange-400 hover:bg-orange-500 text-white px-1 sm:px-2 py-1 rounded-md font-black shadow transform transition active:scale-90 text-[10px] sm:text-xs whitespace-nowrap border-b-2 border-orange-700">- 2</button>
                                 </div>
 
-                                {/* 項目2卡牌區 (流動佈局) */}
                                 <div className="flex-1 bg-slate-50/50 rounded-lg p-0.5 flex flex-wrap content-start justify-center gap-0.5 sm:gap-1 overflow-y-auto mini-card-container border border-slate-100">
                                     {Array.from({ length: scaffoldVar2 }).map((_, i) => (
-                                        <MiniAnimalCard key={`sv2-${i}`} icon={TEST_QUESTIONS[testLevel].icon2} type={TEST_QUESTIONS[testLevel].label2 === '兔' || TEST_QUESTIONS[testLevel].label2 === '汽車' ? 'rabbit' : 'chicken'} colorClass="border-teal-100" isCompact={true} />
+                                        <MiniAnimalCard 
+                                          key={`sv2-${i}`} 
+                                          icon={TEST_QUESTIONS[testLevel].icon2} 
+                                          type={TEST_QUESTIONS[testLevel].label2 === '兔' || TEST_QUESTIONS[testLevel].label2 === '汽車' ? 'rabbit' : 'chicken'} 
+                                          colorClass="border-teal-100" 
+                                          isCompact={true} 
+                                        />
                                     ))}
                                 </div>
                              </div>
                              
                              <div className="mt-1 text-center bg-blue-50 py-0.5 sm:py-1 rounded border border-blue-100 font-bold text-xs sm:text-sm shrink-0 whitespace-nowrap text-center w-full">
                                目前合計：<span className={scaffoldVar1 * TEST_QUESTIONS[testLevel].val1 + scaffoldVar2 * TEST_QUESTIONS[testLevel].val2 === TEST_QUESTIONS[testLevel].targetLegs ? "text-green-600 font-black text-sm sm:text-lg" : "text-blue-600 font-black text-sm sm:text-lg"}>{scaffoldVar1 * TEST_QUESTIONS[testLevel].val1 + scaffoldVar2 * TEST_QUESTIONS[testLevel].val2}</span>
-                               <span className="text-slate-400 text-[10px] ml-1">/ 目標 {TEST_QUESTIONS[testLevel].targetLegs} 腳</span>
+                               <span className="text-slate-400 text-[10px] ml-1">/ 目標 {TEST_QUESTIONS[testLevel].targetLegs}</span>
                              </div>
                            </div>
                         )}
@@ -463,7 +471,7 @@
 
                     <div className="bg-blue-100 p-2 sm:p-3 flex justify-center border-t border-blue-200 rounded-b-xl sm:rounded-b-2xl shrink-0">
                       <button onClick={submitTest} disabled={testAns1 === '' || testAns2 === ''} className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-6 sm:px-16 py-2 sm:py-3.5 rounded-full font-black text-sm sm:text-2xl shadow-lg transform transition active:scale-95 flex items-center gap-2 whitespace-nowrap border-b-4 border-blue-800">
-                        確認送出挑戰 <CheckCircle2 className="w-5 h-5 sm:w-7 sm:h-7 shrink-0"/>
+                        確認送出 <CheckCircle2 className="w-5 h-5 sm:w-7 sm:h-7 shrink-0"/>
                       </button>
                     </div>
                   </div>
@@ -472,9 +480,9 @@
                 {gameMode === 'testComplete' && (
                   <div className="flex flex-col flex-1 overflow-hidden items-center justify-center p-6 sm:p-12 bg-white rounded-b-3xl text-center space-y-3 sm:space-y-4">
                     <Trophy className="text-yellow-400 drop-shadow-xl animate-bounce w-16 h-16 sm:w-24 sm:h-24 shrink-0" />
-                    <h2 className="text-xl sm:text-4xl font-black text-slate-800 whitespace-nowrap uppercase tracking-tighter">太厲害了！數學大師！</h2>
-                    <p className="text-xs sm:text-lg text-slate-600 max-w-sm leading-relaxed px-2">
-                      你已經完全掌握了替換的方法，不論是雞兔同籠還是車輛輪子，都難不倒你了！
+                    <h2 className="text-xl sm:text-4xl font-black text-slate-800 whitespace-nowrap uppercase tracking-tighter text-center">太厲害了！數學大師！</h2>
+                    <p className="text-xs sm:text-lg text-slate-600 max-w-sm leading-relaxed px-2 font-medium">
+                      你已經完全掌握了替換的方法，不論是雞兔同籠還是機車汽車，都難不倒你了！
                     </p>
                     <button onClick={() => { setGameMode('tutorial'); setCurrentLevelIndex(0); }} className="mt-3 sm:mt-6 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-5 py-2 sm:px-8 sm:py-3 rounded-full font-black shadow-lg hover:shadow-xl hover:scale-105 transition-all text-xs sm:text-base flex items-center gap-2 whitespace-nowrap shrink-0 border-b-4 border-green-700">
                       <RefreshCcw className="w-4 h-4 sm:w-6 sm:h-6 shrink-0"/> 重新開始學習旅程
