@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>雞兔同籠數學闖關 v3.1</title>
+    <title>雞兔同籠數學闖關 v3.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -262,7 +262,7 @@
             <div className={`min-h-[100dvh] h-[100dvh] w-full p-1 sm:p-4 lg:p-6 font-sans text-slate-800 transition-colors duration-500 flex flex-col justify-center items-center relative ${gameMode === 'test' || gameMode === 'testComplete' ? 'bg-blue-50' : 'bg-green-50'}`}>
               
               <div className="fixed bottom-1 right-1 sm:bottom-2 sm:right-2 bg-slate-800/40 backdrop-blur-md text-white/90 text-[9px] sm:text-xs px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg shadow-sm z-50 pointer-events-none border border-white/20 font-medium tracking-wide whitespace-nowrap">
-                大榮老師製作 © 2026 | Version 3.1 (v3.1)
+                大榮老師製作 © 2026 | Version 3.2 (v3.2)
               </div>
 
               <div className={`max-w-5xl mx-auto w-full h-full flex flex-col bg-white rounded-xl sm:rounded-3xl shadow-2xl overflow-hidden border-2 sm:border-4 ${gameMode === 'test' || gameMode === 'testComplete' ? 'border-blue-200' : 'border-green-200'}`}>
@@ -324,7 +324,15 @@
 
                       <div className="flex flex-col md:flex-row gap-2 sm:gap-4 flex-1 min-h-0 shrink items-stretch">
                         <div className={`relative flex-1 p-1 sm:p-4 rounded-xl sm:rounded-2xl border-4 transition-colors duration-300 ${isWon ? 'bg-green-100 border-green-400' : 'bg-slate-50 border-slate-200'} flex flex-col shrink min-h-0 items-stretch shadow-inner`}>
-                          <div className="text-slate-400 font-bold mb-1 text-xs sm:text-sm shrink-0 whitespace-nowrap tracking-tighter uppercase text-center w-full">手牌具象化</div>
+                          <div className="flex justify-between items-center mb-1 shrink-0 w-full px-1">
+                            <div className="text-slate-400 font-bold text-xs sm:text-sm whitespace-nowrap tracking-tighter uppercase">手牌具象化</div>
+                            {!isWon && (
+                              <div className="flex gap-1 sm:gap-2">
+                                <button onClick={() => { setChickens(level.targetAnimals); setRabbits(0); }} className="bg-orange-100 hover:bg-orange-200 text-orange-700 border border-orange-300 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded text-[10px] sm:text-xs font-bold shadow-sm transition-all active:scale-90 whitespace-nowrap">全換🐔</button>
+                                <button onClick={() => { setRabbits(level.targetAnimals); setChickens(0); }} className="bg-teal-100 hover:bg-teal-200 text-teal-700 border border-teal-300 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded text-[10px] sm:text-xs font-bold shadow-sm transition-all active:scale-90 whitespace-nowrap">全換🐰</button>
+                              </div>
+                            )}
+                          </div>
                           
                           <div className="flex items-stretch justify-center gap-1 sm:gap-4 flex-1 min-h-0 shrink w-full px-1">
                             {/* 卡牌收納區：透明背景、絕對 1px 內距、居中排列 */}
